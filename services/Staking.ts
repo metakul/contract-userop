@@ -13,9 +13,10 @@ export async function approveandStakeNFT(
   const Id = ethers.BigNumber.from(tokenID);
   console.log(Id);
 
-  const callTo = [ERC721Address];
+  const callTo = [ERC721Address, StakingAddress];
   const callData = [
-    ERC721Contract.interface.encodeFunctionData("approve", [StakingAddress, Id])
+    ERC721Contract.interface.encodeFunctionData("approve", [StakingAddress, Id]),
+    StakingContract.interface.encodeFunctionData("stake", [Id]),
   ];
 
   const getUserOp = {
