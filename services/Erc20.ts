@@ -9,7 +9,7 @@ export async function approveAndSignToken(
   ERC20Contract:any,
   ERC20Address: string,
   value: string,
-):Promise<any[]> {
+):Promise<any> {
 
   
   const [symbol, decimals] = await Promise.all([
@@ -19,20 +19,17 @@ export async function approveAndSignToken(
   const amount = ethers.utils.parseUnits(value, decimals);
   console.log(`Approving ${value} ${symbol}...`);
   
-  const approve = {
-    to: ERC20Address,
-    value:amount,
-    data: ERC20Contract.interface.encodeFunctionData("approve", [ERC20Address, amount]),
-  };
 
-  const send = {
-    to: ERC20Address,
-    value: amount,
-    data: ERC20Contract.interface.encodeFunctionData("transfer", [ERC20Address, amount]),
+  const callTo = [ERC20Address, ERC20Address];
+  const callData = [
+    ERC20Contract.interface.encodeFunctionData("approve", [ERC20Address, amount]),
+    ERC20Contract.interface.encodeFunctionData("transfer", [ERC20Address, amount])
+  ];
+  const getUserOp = {
+    callTo,
+    callData, // Fixed the typo here
   };
-
-  console.log(approve,send)
-  return [approve, send];
+  return getUserOp;
 }
 
 
@@ -41,15 +38,17 @@ export async function transfer(
   ERC20Address: string,
   receiverAddress:string,
   value: string,
-):Promise<any[]> {
+):Promise<any> {
 
   const amount = ethers.utils.parseUnits(value);
 
-  const send = {
-    to: ERC20Address,
-    value:0,
-    data: ERC20Contract.interface.encodeFunctionData("transfer", [receiverAddress, amount]),
+  const callTo=[ERC20Address]
+
+  const callData =[ERC20Contract.interface.encodeFunctionData("transfer", [receiverAddress, amount])]
+  const getUserOp = {
+    callTo,
+    callData // Fixed the typo here
   };
-  return [send];
+  return getUserOp;
 }
 

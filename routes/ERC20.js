@@ -43,7 +43,7 @@ function initializeRoutes(app, ERC20Contract, ERC20Address) {
             // Relay the transaction via smart wallet
             try {
                 // Sign User Operation and wait for the result
-                const signUserOp = yield (0, SignUserOpViaAuth_1.SignUserOpViaAuth)(ERC20Contract, getUserOp, password, bearerToken);
+                const signUserOp = yield (0, SignUserOpViaAuth_1.SignUserOpViaAuth)(ERC20Address, getUserOp, password, bearerToken);
                 console.log(signUserOp);
                 // Respond to the client
                 if (signUserOp.status == 200) {

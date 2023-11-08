@@ -15,12 +15,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.SignUserOpViaAuth = void 0;
 const axios_1 = __importDefault(require("axios"));
 const signerBaseUrl = process.env.SIGNER_BASEURL || "";
-function SignUserOpViaAuth(contract, getUserOp, password, bearerToken) {
+function SignUserOpViaAuth(contractAddress, getUserOp, password, bearerToken) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             console.log(getUserOp);
             const signatureResponse = yield axios_1.default.post(`${signerBaseUrl}/auth/userOpsBuilder`, {
-                contract,
+                contractAddress,
                 getUserOp,
                 password,
             }, {

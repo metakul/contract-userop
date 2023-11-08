@@ -52,7 +52,7 @@ function initializeERC721Routes(
          try {
           // Sign User Operation and wait for the result
           const signUserOp: any = await SignUserOpViaAuth(
-            ERC721Contract,
+            ERC721Address,
             getUserOp,
             password,
             bearerToken
@@ -118,12 +118,11 @@ function initializeERC721Routes(
       try {
         // Sign User Operation and wait for the result
         const signUserOp: any = await SignUserOpViaAuth(
-          ERC721Contract,
+          ERC721Address,
           getUserOp,
           password,
           bearerToken
         );
-        console.log(signUserOp)
 
         // Respond to the client
         if (signUserOp.status == 200) {

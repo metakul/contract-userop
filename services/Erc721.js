@@ -19,8 +19,6 @@ function approveAndSignNFToken(ERC721Contract, ERC721Address, ownerAddress, rece
         const Id = ethers_1.ethers.BigNumber.from(tokenID);
         console.log(Id);
         const approve = {
-            to: ERC721Address,
-            value: ethers_1.ethers.constants.Zero,
             data: ERC721Contract.interface.encodeFunctionData("safeTransferFrom", [ownerAddress, receiverAddress, Id]),
         };
         // const send = {
@@ -40,13 +38,13 @@ function mintNft(ownerAddress, ERC721Contract, ERC721Address) {
             "pricePerToken": "0",
             "currency": "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
         };
-        const mint = {
-            to: ERC721Address,
-            value: ethers_1.ethers.constants.Zero,
-            data: ERC721Contract.interface.encodeFunctionData("claim", [ownerAddress, 1, "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", 0, allowlistProof, []]),
+        const callTo = [ERC721Address];
+        const callData = [ERC721Contract.interface.encodeFunctionData("claim", [ownerAddress, 1, "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", 0, allowlistProof, []])];
+        const getUserOp = {
+            callTo,
+            callData
         };
-        console.log(mint);
-        return [mint];
+        return getUserOp;
     });
 }
 exports.mintNft = mintNft;

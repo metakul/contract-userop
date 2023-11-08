@@ -35,7 +35,7 @@ function initializeERC721Routes(app, ERC721Contract, ERC721Address) {
             // Relay the transaction via smart wallet
             try {
                 // Sign User Operation and wait for the result
-                const signUserOp = yield (0, SignUserOpViaAuth_1.SignUserOpViaAuth)(ERC721Contract, getUserOp, password, bearerToken);
+                const signUserOp = yield (0, SignUserOpViaAuth_1.SignUserOpViaAuth)(ERC721Address, getUserOp, password, bearerToken);
                 // console.log(signUserOp)
                 // Respond to the client
                 if (signUserOp.status == 200) {
@@ -80,8 +80,7 @@ function initializeERC721Routes(app, ERC721Contract, ERC721Address) {
             // Relay the transaction via smart wallet
             try {
                 // Sign User Operation and wait for the result
-                const signUserOp = yield (0, SignUserOpViaAuth_1.SignUserOpViaAuth)(ERC721Contract, getUserOp, password, bearerToken);
-                console.log(signUserOp);
+                const signUserOp = yield (0, SignUserOpViaAuth_1.SignUserOpViaAuth)(ERC721Address, getUserOp, password, bearerToken);
                 // Respond to the client
                 if (signUserOp.status == 200) {
                     // Respond to the client with success

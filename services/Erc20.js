@@ -22,30 +22,29 @@ function approveAndSignToken(ERC20Contract, ERC20Address, value) {
         ]);
         const amount = ethers_1.ethers.utils.parseUnits(value, decimals);
         console.log(`Approving ${value} ${symbol}...`);
-        const approve = {
-            to: ERC20Address,
-            value: amount,
-            data: ERC20Contract.interface.encodeFunctionData("approve", [ERC20Address, amount]),
+        const callTo = [ERC20Address, ERC20Address];
+        const callData = [
+            ERC20Contract.interface.encodeFunctionData("approve", [ERC20Address, amount]),
+            ERC20Contract.interface.encodeFunctionData("transfer", [ERC20Address, amount])
+        ];
+        const getUserOp = {
+            callTo,
+            callData, // Fixed the typo here
         };
-        const send = {
-            to: ERC20Address,
-            value: amount,
-            data: ERC20Contract.interface.encodeFunctionData("transfer", [ERC20Address, amount]),
-        };
-        console.log(approve, send);
-        return [approve, send];
+        return getUserOp;
     });
 }
 exports.approveAndSignToken = approveAndSignToken;
 function transfer(ERC20Contract, ERC20Address, receiverAddress, value) {
     return __awaiter(this, void 0, void 0, function* () {
         const amount = ethers_1.ethers.utils.parseUnits(value);
-        const send = {
-            to: ERC20Address,
-            value: 0,
-            data: ERC20Contract.interface.encodeFunctionData("transfer", [receiverAddress, amount]),
+        const callTo = [ERC20Address];
+        const callData = [ERC20Contract.interface.encodeFunctionData("transfer", [receiverAddress, amount])];
+        const getUserOp = {
+            callTo,
+            callData // Fixed the typo here
         };
-        return [send];
+        return getUserOp;
     });
 }
 exports.transfer = transfer;

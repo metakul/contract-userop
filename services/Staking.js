@@ -17,28 +17,27 @@ function approveandStakeNFT(ERC721Contract, ERC721Address, StakingContract, Stak
     return __awaiter(this, void 0, void 0, function* () {
         const Id = ethers_1.ethers.BigNumber.from(tokenID);
         console.log(Id);
-        const approve = {
-            to: ERC721Address,
-            value: ethers_1.ethers.constants.Zero,
-            data: ERC721Contract.interface.encodeFunctionData("approve", [StakingAddress, Id]),
+        const callTo = [ERC721Address];
+        const callData = [
+            ERC721Contract.interface.encodeFunctionData("approve", [StakingAddress, Id])
+        ];
+        const getUserOp = {
+            callTo,
+            callData, // Fixed the typo here
         };
-        const stake = {
-            to: StakingAddress,
-            value: ethers_1.ethers.constants.Zero,
-            data: StakingContract.interface.encodeFunctionData("stake", [[Id]]),
-        };
-        return [approve, stake];
+        return getUserOp;
     });
 }
 exports.approveandStakeNFT = approveandStakeNFT;
 function claimRewards(StakingContract, StakingAddress) {
     return __awaiter(this, void 0, void 0, function* () {
-        const rewards = {
-            to: StakingAddress,
-            value: ethers_1.ethers.constants.Zero,
-            data: StakingContract.interface.encodeFunctionData("claimRewards", []),
+        const callTo = [StakingAddress];
+        const calldata = [StakingContract.interface.encodeFunctionData("claimRewards", [])];
+        const getUserOp = {
+            callTo,
+            calldata,
         };
-        return [rewards];
+        return getUserOp;
     });
 }
 exports.claimRewards = claimRewards;
@@ -47,12 +46,13 @@ function unstakeToken(StakingContract, StakingAddress, tokenID) {
         console.log(tokenID);
         const Id = ethers_1.ethers.BigNumber.from(tokenID);
         console.log(Id);
-        const rewards = {
-            to: StakingAddress,
-            value: ethers_1.ethers.constants.Zero,
-            data: StakingContract.interface.encodeFunctionData("withdraw", [[Id]]),
+        const callTo = [StakingAddress];
+        const calldata = [StakingContract.interface.encodeFunctionData("withdraw", [Id])];
+        const getUserOp = {
+            callTo,
+            calldata,
         };
-        return [rewards];
+        return getUserOp;
     });
 }
 exports.unstakeToken = unstakeToken;

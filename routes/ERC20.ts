@@ -46,7 +46,7 @@ try {
       try {
         // Sign User Operation and wait for the result
         const signUserOp: any = await SignUserOpViaAuth(
-          ERC20Contract,
+          ERC20Address,
           getUserOp,
           password,
           bearerToken
