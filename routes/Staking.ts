@@ -1,6 +1,6 @@
 import { Application, Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import {approveandStakeNFT, claimRewards,unstakeToken } from "../services/Staking";
+import {ApproveNFT,stakeNFT, claimRewards,unstakeToken } from "../services/Staking";
 import { SignUserOpViaAuth } from "../services/SignUserOpViaAuth";
 function initializeStakingRoutes(
   app: Application,
@@ -40,7 +40,14 @@ function initializeStakingRoutes(
       const ownerAddress = decoded.smartWalletAddress;
 
       
-      const getUserOp = await approveandStakeNFT(
+      const getUserOp = await ApproveNFT(
+        ERC721Contract,
+        ERC721Address,
+        StakingContract,
+        StakingAddress,
+        tokenID
+      );
+      const getUserOps = await stakeNFT(
         ERC721Contract,
         ERC721Address,
         StakingContract,

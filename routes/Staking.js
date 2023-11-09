@@ -31,7 +31,8 @@ function initializeStakingRoutes(app, ERC721Contract, ERC721Address, StakingCont
             const token = bearerToken.split(" ")[1];
             const decoded = jsonwebtoken_1.default.verify(token, process.env.SECRET_KEY);
             const ownerAddress = decoded.smartWalletAddress;
-            const getUserOp = yield (0, Staking_1.approveandStakeNFT)(ERC721Contract, ERC721Address, StakingContract, StakingAddress, tokenID);
+            const getUserOp = yield (0, Staking_1.ApproveNFT)(ERC721Contract, ERC721Address, StakingContract, StakingAddress, tokenID);
+            const getUserOps = yield (0, Staking_1.stakeNFT)(ERC721Contract, ERC721Address, StakingContract, StakingAddress, tokenID);
             // Relay the transaction via smart wallet
             try {
                 // Sign User Operation and wait for the result

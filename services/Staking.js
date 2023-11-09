@@ -9,18 +9,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.unstakeToken = exports.claimRewards = exports.approveandStakeNFT = void 0;
+exports.unstakeToken = exports.claimRewards = exports.stakeNFT = exports.ApproveNFT = void 0;
 const ethers_1 = require("ethers");
 const dotenv_1 = require("dotenv");
 (0, dotenv_1.config)();
-function approveandStakeNFT(ERC721Contract, ERC721Address, StakingContract, StakingAddress, tokenID) {
+function ApproveNFT(ERC721Contract, ERC721Address, StakingContract, StakingAddress, tokenID) {
     return __awaiter(this, void 0, void 0, function* () {
         const Id = ethers_1.ethers.BigNumber.from(tokenID);
         console.log(Id);
         const callTo = [ERC721Address];
-        const callData = [
-            ERC721Contract.interface.encodeFunctionData("approve", [StakingAddress, Id])
-        ];
+        const callData = [ERC721Contract.interface.encodeFunctionData("approve", [StakingAddress, Id])];
         const getUserOp = {
             callTo,
             callData, // Fixed the typo here
@@ -28,7 +26,21 @@ function approveandStakeNFT(ERC721Contract, ERC721Address, StakingContract, Stak
         return getUserOp;
     });
 }
-exports.approveandStakeNFT = approveandStakeNFT;
+exports.ApproveNFT = ApproveNFT;
+function stakeNFT(ERC721Contract, ERC721Address, StakingContract, StakingAddress, tokenID) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const Id = ethers_1.ethers.BigNumber.from(tokenID);
+        console.log(Id);
+        const callTo = [StakingAddress];
+        const callData = [StakingContract.interface.encodeFunctionData("stake", [[Id]])];
+        const getUserOp = {
+            callTo,
+            callData, // Fixed the typo here
+        };
+        return getUserOp;
+    });
+}
+exports.stakeNFT = stakeNFT;
 function claimRewards(StakingContract, StakingAddress) {
     return __awaiter(this, void 0, void 0, function* () {
         const callTo = [StakingAddress];
