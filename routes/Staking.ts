@@ -64,12 +64,20 @@ function initializeStakingRoutes(
             password,
             bearerToken
           );
-          const signUserOp2: any = await SignUserOpViaAuth(
-            ERC721Contract,
-            getUserOp2,
-            password,
-            bearerToken
-          );
+            let signUserOp2: any
+          if (signUserOp.data.transactionHash){
+            signUserOp2 = await SignUserOpViaAuth(
+              ERC721Contract,
+              getUserOp2,
+              password,
+              bearerToken
+            );
+          }
+          else{
+            res.status(400).json({ error: "Error while approving nft." });
+          }
+
+        
           console.log(signUserOp)
   
           // Respond to the client
