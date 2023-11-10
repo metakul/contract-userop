@@ -1,47 +1,36 @@
-//basic server for 
+"use strict";
+const nodemailer = require("nodemailer");
 
-const {config} =require("dotenv")
-config();
+const transporter = nodemailer.createTransport({
+  host: "smtp.forwardemail.net",
+  port: 465,
+  secure: true,
+  auth: {
+    // TODO: replace `user` and `pass` values from <https://forwardemail.net>
+    user: "founder@metakul.live",
+    pass: "c25da3cbc65430401d7871e2",
+  },
+});
 
-const  {ThirdwebSDK} = require("@thirdweb-dev/sdk")
-
-
-
-  const sdk = ThirdwebSDK.fromPrivateKey(process.env.PRIVATE_KEY, "polygon",{
-    secretKey:"U44uvKQJkQYLdnDdxHfBnjQDfG_mx6jUUulCvo2l9UyJGvqx2inzPu2EypIvVrnonMtAW_2h2Dn0Z3Rfux2LHg"
+// async..await is not allowed in global scope, must use a wrapper
+async function main() {
+  // send mail with defined transport object
+  const info = await transporter.sendMail({
+    from: '"Fred Foo 👻" <foo@example.com>', // sender address
+    to: "shubhamkunwar10@gmail.com, baz@example.com", // list of receivers
+    subject: "Hello ✔", // Subject line
+    text: "Hello world?", // plain text body
+    html: "<b>Hello world?</b>", // html body
   });
 
+  console.log("Message sent: %s", info.messageId);
+  // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
 
-
-async function createUserOp() {
-  // Build & send
-  const contract = await sdk.getContract("0x710E9161e8A768c0605335AB632361839f761374")
-
-  const tx=await contract.erc721.claim(
-    "0x9808A1AD4f7DF5992e22F7e21C12819fa98Ee54e",
-    "1",
-    "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
-    {"type":"BigNumber","hex":"0x00"},
-    {
-      "proof": [
-        "0x0000000000000000000000000000000000000000000000000000000000000000"
-      ],
-      "quantityLimitPerWallet": {
-        "type": "BigNumber",
-        "hex": "0x00"
-      },
-      "pricePerToken": {
-        "type": "BigNumber",
-        "hex": "0x00"
-      },
-      "currency": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
-    },
-    {}
-  )
-  const receipt=tx.receipt
-  const claimedId=tx.id
-  console.log(receipt, claimedId)
-  
+  //
+  // NOTE: You can go to https://forwardemail.net/my-account/emails to see your email delivery status and preview
+  //       Or you can use the "preview-email" npm package to preview emails locally in browsers and iOS Simulator
+  //       <https://github.com/forwardemail/preview-email>
+  //
 }
 
-createUserOp()
+main().catch(console.error);

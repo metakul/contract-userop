@@ -47,7 +47,7 @@ function initializeStakingRoutes(
         StakingAddress,
         tokenID
       );
-      const getUserOps = await stakeNFT(
+      const getUserOp2 = await stakeNFT(
         ERC721Contract,
         ERC721Address,
         StakingContract,
@@ -64,12 +64,17 @@ function initializeStakingRoutes(
             password,
             bearerToken
           );
+          const signUserOp2: any = await SignUserOpViaAuth(
+            ERC721Contract,
+            getUserOp2,
+            password,
+            bearerToken
+          );
           console.log(signUserOp)
   
           // Respond to the client
-          if (signUserOp.status == 200) {
-            // Respond to the client with success
-  
+          if (signUserOp.status == 200 && signUserOp2.status==200) {
+            // Respond to the client with success  
             res.status(200).json({
               message: "NFT Staked ",
               details: signUserOp.data,
