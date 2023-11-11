@@ -1,6 +1,6 @@
 import { Application, Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import {ApproveNFT,stakeNFT, claimRewards,unstakeToken } from "../services/Staking";
+import {stakeNFT, claimRewards,unstakeToken } from "../services/Staking";
 import { SignUserOpViaAuth } from "../services/SignUserOpViaAuth";
 function initializeStakingRoutes(
   app: Application,
@@ -14,7 +14,6 @@ function initializeStakingRoutes(
   app.post("/stakeNFT", async (req: Request, res: Response) => {
     try {
       const {  tokenID, password } = req.body;
-      console.log(req.body);
 
       // Extract the authorization token from the request headers
       const bearerToken = req.headers.authorization as string;
@@ -40,21 +39,13 @@ function initializeStakingRoutes(
       const ownerAddress = decoded.smartWalletAddress;
 
       
-      const getUserOp = await ApproveNFT(
+      const getUserOp = await stakeNFT(
         ERC721Contract,
         ERC721Address,
         StakingContract,
         StakingAddress,
         tokenID
       );
-      const getUserOp2 = await stakeNFT(
-        ERC721Contract,
-        ERC721Address,
-        StakingContract,
-        StakingAddress,
-        tokenID
-      );
-
          // Relay the transaction via smart wallet
          try {
           // Sign User Operation and wait for the result
@@ -63,25 +54,12 @@ function initializeStakingRoutes(
             getUserOp,
             password,
             bearerToken
-          );
-            let signUserOp2: any
-          if (signUserOp.data.transactionHash){
-            signUserOp2 = await SignUserOpViaAuth(
-              ERC721Contract,
-              getUserOp2,
-              password,
-              bearerToken
-            );
-          }
-          else{
-            res.status(400).json({ error: "Error while approving nft." });
-          }
-
+          ); 
         
-          console.log(signUserOp)
+          console.log(signUserOp.data.data)
   
           // Respond to the client
-          if (signUserOp.status == 200 && signUserOp2.status==200) {
+          if (signUserOp.data.data.transactionHash) {
             // Respond to the client with success  
             res.status(200).json({
               message: "NFT Staked ",
@@ -107,7 +85,6 @@ function initializeStakingRoutes(
   app.post("/claimRewards", async (req: Request, res: Response) => {
     try {
       const { password } = req.body;
-      console.log(password)
 
       // Extract the authorization token from the request headers
       const bearerToken = req.headers.authorization as string;
@@ -130,7 +107,6 @@ function initializeStakingRoutes(
         process.env.SECRET_KEY as string
       ) as DecodedToken;
       
-      const ownerAddress = decoded.smartWalletAddress;
 
       
       const getUserOp = await claimRewards(
@@ -147,14 +123,14 @@ function initializeStakingRoutes(
             password,
             bearerToken
           );
-          console.log(signUserOp)
+          console.log(signUserOp.data)
   
           // Respond to the client
-          if (signUserOp.status == 200) {
+          if (signUserOp.data.data.transactionHash) {
             // Respond to the client with success
   
             res.status(200).json({
-              message: "NFT Staked ",
+              message: "Rewards Claime ",
               details: signUserOp.data,
             });
           } else {
@@ -162,7 +138,7 @@ function initializeStakingRoutes(
             res.status(400).json({ error: signUserOp });
           }
         } catch (error: any) {
-          console.log(error)
+          console.log(error.data)
   
           res.status(500).json({
             message: "Failed to Submit user Operation",
@@ -178,7 +154,7 @@ function initializeStakingRoutes(
   app.post("/unstakeNFT", async (req: Request, res: Response) => {
     try {
       const {  tokenID, password } = req.body;
-      console.log(req.body);
+      console.log(req.body,"hi");
 
       // Extract the authorization token from the request headers
       const bearerToken = req.headers.authorization as string;
@@ -219,14 +195,14 @@ function initializeStakingRoutes(
             password,
             bearerToken
           );
-          console.log(signUserOp)
+          console.log(signUserOp.data.data)
   
           // Respond to the client
-          if (signUserOp.status == 200) {
+          if (signUserOp.data.data.transactionHash) {
             // Respond to the client with success
   
             res.status(200).json({
-              message: "NFT Staked ",
+              message: "NFT UnStaked ",
               details: signUserOp.data,
             });
           } else {
@@ -234,7 +210,7 @@ function initializeStakingRoutes(
             res.status(400).json({ error: signUserOp });
           }
         } catch (error: any) {
-          console.log(error)
+          console.log(error.response.data)
   
           res.status(500).json({
             message: "Failed to Submit user Operation",
@@ -242,7 +218,7 @@ function initializeStakingRoutes(
           });
         }
     } catch (error: any) {
-      console.log(error)
+      console.log(error.response.data)
       res.status(500).json({ error: error.reason || error.message });
     }
   });  

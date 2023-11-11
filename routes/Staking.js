@@ -21,7 +21,6 @@ function initializeStakingRoutes(app, ERC721Contract, ERC721Address, StakingCont
     app.post("/stakeNFT", (req, res) => __awaiter(this, void 0, void 0, function* () {
         try {
             const { tokenID, password } = req.body;
-            console.log(req.body);
             // Extract the authorization token from the request headers
             const bearerToken = req.headers.authorization;
             if (!bearerToken || !bearerToken.startsWith("Bearer ")) {
@@ -31,16 +30,15 @@ function initializeStakingRoutes(app, ERC721Contract, ERC721Address, StakingCont
             const token = bearerToken.split(" ")[1];
             const decoded = jsonwebtoken_1.default.verify(token, process.env.SECRET_KEY);
             const ownerAddress = decoded.smartWalletAddress;
-            const getUserOp = yield (0, Staking_1.ApproveNFT)(ERC721Contract, ERC721Address, StakingContract, StakingAddress, tokenID);
-            const getUserOps = yield (0, Staking_1.stakeNFT)(ERC721Contract, ERC721Address, StakingContract, StakingAddress, tokenID);
+            const getUserOp = yield (0, Staking_1.stakeNFT)(ERC721Contract, ERC721Address, StakingContract, StakingAddress, tokenID);
             // Relay the transaction via smart wallet
             try {
                 // Sign User Operation and wait for the result
                 const signUserOp = yield (0, SignUserOpViaAuth_1.SignUserOpViaAuth)(ERC721Contract, getUserOp, password, bearerToken);
-                console.log(signUserOp);
+                console.log(signUserOp.data.data);
                 // Respond to the client
-                if (signUserOp.status == 200) {
-                    // Respond to the client with success
+                if (signUserOp.data.data.transactionHash) {
+                    // Respond to the client with success  
                     res.status(200).json({
                         message: "NFT Staked ",
                         details: signUserOp.data,
@@ -67,7 +65,6 @@ function initializeStakingRoutes(app, ERC721Contract, ERC721Address, StakingCont
     app.post("/claimRewards", (req, res) => __awaiter(this, void 0, void 0, function* () {
         try {
             const { password } = req.body;
-            console.log(password);
             // Extract the authorization token from the request headers
             const bearerToken = req.headers.authorization;
             if (!bearerToken || !bearerToken.startsWith("Bearer ")) {
@@ -76,18 +73,17 @@ function initializeStakingRoutes(app, ERC721Contract, ERC721Address, StakingCont
             // Extract the JWT token (remove 'Bearer ' from the token string)
             const token = bearerToken.split(" ")[1];
             const decoded = jsonwebtoken_1.default.verify(token, process.env.SECRET_KEY);
-            const ownerAddress = decoded.smartWalletAddress;
             const getUserOp = yield (0, Staking_1.claimRewards)(StakingContract, StakingAddress);
             // Relay the transaction via smart wallet
             try {
                 // Sign User Operation and wait for the result
                 const signUserOp = yield (0, SignUserOpViaAuth_1.SignUserOpViaAuth)(ERC721Contract, getUserOp, password, bearerToken);
-                console.log(signUserOp);
+                console.log(signUserOp.data);
                 // Respond to the client
-                if (signUserOp.status == 200) {
+                if (signUserOp.data.data.transactionHash) {
                     // Respond to the client with success
                     res.status(200).json({
-                        message: "NFT Staked ",
+                        message: "Rewards Claime ",
                         details: signUserOp.data,
                     });
                 }
@@ -97,7 +93,7 @@ function initializeStakingRoutes(app, ERC721Contract, ERC721Address, StakingCont
                 }
             }
             catch (error) {
-                console.log(error);
+                console.log(error.data);
                 res.status(500).json({
                     message: "Failed to Submit user Operation",
                     error: error, // Include the error message for debugging purposes
@@ -112,7 +108,7 @@ function initializeStakingRoutes(app, ERC721Contract, ERC721Address, StakingCont
     app.post("/unstakeNFT", (req, res) => __awaiter(this, void 0, void 0, function* () {
         try {
             const { tokenID, password } = req.body;
-            console.log(req.body);
+            console.log(req.body, "hi");
             // Extract the authorization token from the request headers
             const bearerToken = req.headers.authorization;
             if (!bearerToken || !bearerToken.startsWith("Bearer ")) {
@@ -127,12 +123,12 @@ function initializeStakingRoutes(app, ERC721Contract, ERC721Address, StakingCont
             try {
                 // Sign User Operation and wait for the result
                 const signUserOp = yield (0, SignUserOpViaAuth_1.SignUserOpViaAuth)(ERC721Contract, getUserOp, password, bearerToken);
-                console.log(signUserOp);
+                console.log(signUserOp.data.data);
                 // Respond to the client
-                if (signUserOp.status == 200) {
+                if (signUserOp.data.data.transactionHash) {
                     // Respond to the client with success
                     res.status(200).json({
-                        message: "NFT Staked ",
+                        message: "NFT UnStaked ",
                         details: signUserOp.data,
                     });
                 }
@@ -142,7 +138,7 @@ function initializeStakingRoutes(app, ERC721Contract, ERC721Address, StakingCont
                 }
             }
             catch (error) {
-                console.log(error);
+                console.log(error.response.data);
                 res.status(500).json({
                     message: "Failed to Submit user Operation",
                     error: error, // Include the error message for debugging purposes
@@ -150,7 +146,7 @@ function initializeStakingRoutes(app, ERC721Contract, ERC721Address, StakingCont
             }
         }
         catch (error) {
-            console.log(error);
+            console.log(error.response.data);
             res.status(500).json({ error: error.reason || error.message });
         }
     }));

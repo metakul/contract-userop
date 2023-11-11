@@ -10,26 +10,26 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.mintNft = exports.approveAndSignNFToken = void 0;
+exports.mintNft = exports.safeTransferNFToken = void 0;
 const ethers_1 = require("ethers");
 const dotenv_1 = require("dotenv");
 (0, dotenv_1.config)();
-function approveAndSignNFToken(ERC721Contract, ERC721Address, ownerAddress, receiverAddress, tokenID) {
+function safeTransferNFToken(ERC721Contract, ERC721Address, ownerAddress, receiverAddress, tokenID) {
     return __awaiter(this, void 0, void 0, function* () {
         const Id = ethers_1.ethers.BigNumber.from(tokenID);
         console.log(Id);
-        const approve = {
-            data: ERC721Contract.interface.encodeFunctionData("safeTransferFrom", [ownerAddress, receiverAddress, Id]),
+        const callTo = [ERC721Address];
+        const callData = [
+            ERC721Contract.interface.encodeFunctionData("safeTransferFrom", [ownerAddress, receiverAddress, Id])
+        ];
+        const getUserOp = {
+            callTo,
+            callData,
         };
-        // const send = {
-        //   to: ERC721Address,
-        //   value: ethers.constants.Zero,
-        //   data: ERC721Contract.interface.encodeFunctionData("transfer", [receiverAddress, Id]),
-        // };
-        return [approve];
+        return getUserOp;
     });
 }
-exports.approveAndSignNFToken = approveAndSignNFToken;
+exports.safeTransferNFToken = safeTransferNFToken;
 function mintNft(ownerAddress, ERC721Contract, ERC721Address) {
     return __awaiter(this, void 0, void 0, function* () {
         const allowlistProof = {

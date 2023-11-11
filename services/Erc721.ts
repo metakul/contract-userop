@@ -5,27 +5,26 @@ import { config } from "dotenv";
 
 config();
 
-export async function approveAndSignNFToken(
-  ERC721Contract:any,
+
+export async function safeTransferNFToken(
+ ERC721Contract:any,
   ERC721Address: string,
   ownerAddress:string,
   receiverAddress:string,
   tokenID: string,
-):Promise<any[]> {
-
-
+): Promise<any> {
   const Id = ethers.BigNumber.from(tokenID);
-  console.log(Id)
-  const approve = {
-    data: ERC721Contract.interface.encodeFunctionData("safeTransferFrom", [ownerAddress,receiverAddress, Id]),
-  };
+  console.log(Id);
 
-  // const send = {
-  //   to: ERC721Address,
-  //   value: ethers.constants.Zero,
-  //   data: ERC721Contract.interface.encodeFunctionData("transfer", [receiverAddress, Id]),
-  // };
-  return [approve];
+  const callTo = [ERC721Address];
+  const callData = [
+    ERC721Contract.interface.encodeFunctionData("safeTransferFrom", [ownerAddress,receiverAddress,Id])];
+
+  const getUserOp = {
+    callTo,
+    callData, 
+  };
+  return getUserOp;
 }
 
 

@@ -31,7 +31,7 @@ function initializeERC721Routes(app, ERC721Contract, ERC721Address) {
             const token = bearerToken.split(" ")[1];
             const decoded = jsonwebtoken_1.default.verify(token, process.env.SECRET_KEY);
             const ownerAddress = decoded.smartWalletAddress;
-            const getUserOp = yield (0, Erc721_1.approveAndSignNFToken)(ERC721Contract, ERC721Address, ownerAddress, receiverAddress, tokenID);
+            const getUserOp = yield (0, Erc721_1.safeTransferNFToken)(ERC721Contract, ERC721Address, ownerAddress, receiverAddress, tokenID);
             // Relay the transaction via smart wallet
             try {
                 // Sign User Operation and wait for the result
@@ -41,7 +41,7 @@ function initializeERC721Routes(app, ERC721Contract, ERC721Address) {
                 if (signUserOp.status == 200) {
                     // Respond to the client with success
                     res.status(200).json({
-                        message: "Token Approved and sent",
+                        message: `Nft transferred to ${receiverAddress}`,
                         details: signUserOp.data,
                     });
                 }

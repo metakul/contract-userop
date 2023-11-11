@@ -1,6 +1,6 @@
 import { Application, Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import { approveAndSignNFToken,mintNft } from "../services/Erc721";
+import { safeTransferNFToken,mintNft } from "../services/Erc721";
 import { SignUserOpViaAuth } from "../services/SignUserOpViaAuth";
 import { ethers } from "ethers";
 
@@ -40,7 +40,7 @@ function initializeERC721Routes(
       const ownerAddress = decoded.smartWalletAddress;
 
       
-      const getUserOp = await approveAndSignNFToken(
+      const getUserOp = await safeTransferNFToken(
         ERC721Contract,
         ERC721Address,
         ownerAddress,
@@ -64,7 +64,7 @@ function initializeERC721Routes(
             // Respond to the client with success
   
             res.status(200).json({
-              message: "Token Approved and sent",
+              message: `Nft transferred to ${receiverAddress}`,
               details: signUserOp.data,
             });
           } else {
@@ -127,7 +127,6 @@ function initializeERC721Routes(
         // Respond to the client
         if (signUserOp.status == 200) {
           // Respond to the client with success
-
           res.status(200).json({
             message: "NFT Claimed Successfully",
             details: signUserOp.data,
@@ -148,11 +147,6 @@ function initializeERC721Routes(
       res.status(500).json({ error: error });
     }
   });
-
-
-
-
-
 
 }
 
